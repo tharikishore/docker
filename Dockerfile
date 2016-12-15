@@ -1,4 +1,28 @@
-FROM openjdk:8-jdk
+FROM ubuntu:16.04
+
+RUN apt-get update && \
+      apt-get -y install sudo
+
+RUN sudo apt-get update -y \
+        && sudo apt-get install -y \
+        software-properties-common \
+        --no-install-recommends \
+        && sudo apt-get install unzip -y \
+        --no-install-recommends \
+        && sudo add-apt-repository ppa:webupd8team/java -y \
+        && sudo apt-get update -y \
+        && echo debconf shared/accepted-oracle-license-v1-1 select true | \
+        sudo debconf-set-selections \
+        && echo debconf shared/accepted-oracle-license-v1-1 seen true | \
+        sudo debconf-set-selections \
+        && sudo apt-get install oracle-java8-installer -y \
+        --no-install-recommends \
+        && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME /usr/lib/jvm/java-8-oracle
+ENV JAVA_OPTS "-Xmx4096m -Xms1024m"
+
+ENV PATH $JAVA_HOME/bin:$PATH
 
 RUN apt-get update && apt-get install -y git curl && rm -rf /var/lib/apt/lists/*
 
